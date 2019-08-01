@@ -9,17 +9,17 @@ flourocarbon_diameter = .00022 #m
 
 filenames = []
 for file in os.listdir():
-    try:
-        if file.split('.')[1] == 'csv':
-            filenames.append(file)
-    except:
-        pass
+    if file.split('.')[1] == 'csv':
+        filenames.append(file)
 
 
 data = {'flourocarbon':[], 'monofilament':[]}
 for filename in filenames:
     df = pd.read_csv(filename, skiprows = 19)
     if 'monofilament' in filename:
+        if '1' in filename:
+            data['monofilament'].append(nan)
+            continue
         max_stress = df['N'].max()/monofilament_diameter
         data['monofilament'].append(max_stress)
     elif 'flourocarbon' in filename:
@@ -36,7 +36,7 @@ for filename in filenames:
 
 
 data = pd.DataFrame(data)
-data.to_pickle('pristine.pkl')
+data.to_pickle('exposure1.pkl')
 mono_mean = data['monofilament'].mean()/1000
 mono_std = data['monofilament'].std()/1000
 flouro_mean = data['flourocarbon'].mean()/1000
@@ -51,8 +51,8 @@ ax.set_ylabel('Max Stress [kPa]')
 ax.set_xlabel('Material')
 ax.set_xticks([0,1])
 ax.set_xticklabels(['Monofilament', 'Flourocarbon'])
-ax.set_title('Pristine Material Properties')
-plt.savefig('Pristine Material Properties.png',bbox_inches = 'tight')
+ax.set_title('Exposure 1 Material Properties')
+plt.savefig('Exposed Material Properties.png',bbox_inches = 'tight')
 
 
 plt.show()
